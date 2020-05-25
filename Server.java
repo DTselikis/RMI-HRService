@@ -7,7 +7,7 @@ import java.rmi.registry.Registry;
 
 public class Server {
     public static void main(String[] args) {
-        if (args.length < 2) {
+        if (args.length < 1) {
             System.out.println("Usage: java Server <host>");
             System.exit(1);
         }
@@ -29,7 +29,7 @@ public class Server {
         }
 
         StringBuilder rmiRegS = new StringBuilder();
-        rmiRegS.append("rmi://").append(args[2]).append("HRService");
+        rmiRegS.append("rmi://").append(args[0]).append(":1099/").append("HRService");
         try {
             Naming.rebind(rmiRegS.toString(), remoteServer);
         } catch (RemoteException e) {

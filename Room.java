@@ -35,7 +35,7 @@ public class Room {
     }
 
     public int book(String name, int numOfRooms) {
-        if (numOfRooms >= availability) {
+        if (availability >= numOfRooms) {
             bookedRooms.put(name, numOfRooms);
         }
         else {

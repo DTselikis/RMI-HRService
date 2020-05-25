@@ -40,15 +40,24 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
     public ArrayList<Integer> book(String name, int numOfRooms, char roomType) throws RemoteException {
         Guest guest;
         if ((guest = guests.get(name)) == null) {
-            guests.put(name, new Guest(name));
+            guest = new Guest(name);
+            guests.put(name, guest);
         }
 
-        int bookedRooms = rooms.get(roomType).book(name, numOfRooms);
-        if (bookedRooms > 0) {
-            guest.addRoom(roomType, numOfRooms, rooms.get(roomType).getPrice());
-        }
-
+        System.out.println();
         ArrayList<Integer> booked = new ArrayList<>();
+        int bookedRooms = 0;
+        if (rooms.get((roomType)).getAvailability() < numOfRooms) {
+            booked.add(rooms.get(roomType).getAvailability());
+        }
+        else {
+            bookedRooms = rooms.get(roomType).book(name, numOfRooms);
+            System.out.println("booked rooms:" + bookedRooms);
+            if (bookedRooms > 0) {
+                guest.addRoom(roomType, numOfRooms, rooms.get(roomType).getPrice());
+            }
+        }
+
         booked.add(bookedRooms);
         booked.add(bookedRooms * rooms.get(roomType).getPrice());
 

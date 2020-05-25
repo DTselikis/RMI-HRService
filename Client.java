@@ -17,7 +17,7 @@ public class Client {
         ArrayList<Character> roomsNotify = new ArrayList<>();
 
         StringBuilder msg = new StringBuilder();
-        if (args.length < 2) {
+        if (args.length < 1) {
             msg.append("Usage:").append("java HRClient list <hostname>").append(System.lineSeparator());
             msg.append("java HRClient book <hostname> <type> <number> <name>").append(System.lineSeparator());
             msg.append("java HRClient guests <hostname>").append(System.lineSeparator());
@@ -27,15 +27,15 @@ public class Client {
             System.exit(1);
         }
         else {
-            switch (args[2]) {
+            switch (args[0]) {
                 case "book":
                 case "cancel": {
                     try {
-                        type = args[3].charAt(0);
-                        numOfRooms = Integer.parseInt(args[4]);
-                        name = args[5];
-                    } catch (NullPointerException ex) {
-                        if (args[2].equals("book")) {
+                        type = args[2].charAt(0);
+                        numOfRooms = Integer.parseInt(args[3]);
+                        name = args[4];
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        if (args[0].equals("book")) {
                             System.out.println("Usage: java HRClient book <hostname> <type> <number> <name>\n");
                         }
                         else {
@@ -48,9 +48,9 @@ public class Client {
                 case "guests":
                 case "list": {
                     try {
-                        hostname = args[2];
-                    } catch (NullPointerException ex) {
-                        if (args[2].equals("list")) {
+                        hostname = args[1];
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        if (args[0].equals("list")) {
                             System.out.println("Usage: java HRClient list <hostname>\n");
                         }
                         else {
@@ -59,16 +59,27 @@ public class Client {
 
                         System.exit(1);
                     }
+                    break;
+                }
+                default: {
+                    StringBuilder usgMsg = new StringBuilder();
+                    usgMsg.append("Usage:").append("java HRClient list <hostname>").append(System.lineSeparator());
+                    usgMsg.append("java HRClient book <hostname> <type> <number> <name>").append(System.lineSeparator());
+                    usgMsg.append("java HRClient guests <hostname>").append(System.lineSeparator());
+                    usgMsg.append("java HRClient cancel <hostname> <type> <number> <name>").append(System.lineSeparator());
+                    System.out.println(usgMsg.toString());
+
+                    System.exit(1);
                 }
             }
         }
 
-        msg.append("rmi://").append(hostname).append(":").append("/HRService");
+        msg.append("rmi://").append(hostname).append(":1099").append("/HRService");
         HRIServer remoteServer = null;
         try {
             remoteServer  = (HRIServer) Naming.lookup(msg.toString());
 
-            switch (args[2]) {
+            switch (args[0]) {
                 case "list": {
                     HashMap<Character, ArrayList<Integer>> roomsList;
                     roomsList = remoteServer.list();
@@ -92,30 +103,30 @@ public class Client {
                         response = remoteServer.book(name, numOfRooms, type);
 
                         if (response.get(0) == numOfRooms) {
-                            System.out.println("All rooms booked with total cost of :" + response.get(1) + "€\n");
+                            System.out.println("All rooms booked with total cost of: " + response.get(1) + "€\n");
 
                             roomsNotify.remove(Character.valueOf(type));
+
+                            choice = "n";
                         }
-                        else if (response.get(0) > 0) {
-                            System.out.println("There are " + response.get(0) + "available rooms at the moment.\n");
+                        else if (response.get(0) >= 0) {
+                            System.out.println("There are " + response.get(0) + " available rooms at the moment.\n");
                             System.out.println("Do you want to book them?\n");
-                            System.out.println("Choice (y/n): ");
+                            System.out.print("Choice (y/n): ");
                             choice = input.nextLine();
 
                             if(choice.equals("y")) {
                                 numOfRooms = response.get(0);
                             }
                         }
-                        else {
-                            choice = "y";
-                        }
                     }
 
                     // possible BUG
                     if (response.get(0) != numOfRooms && !roomsNotify.contains(Character.valueOf(type))) {
-                        System.out.println("Do you want to be notified when more rooms are available?\n");
-                        System.out.println("Choice (y/n): ");
+                        System.out.println("\nDo you want to be notified when more rooms are available?\n");
+                        System.out.print("Choice (y/n): ");
                         choice = input.nextLine();
+                        System.out.println();
 
                         if(choice.equals("y")) {
                             if (callback == null) {
@@ -134,15 +145,21 @@ public class Client {
                     guests = remoteServer.guests();
 
                     StringBuilder guestsMsg = new StringBuilder();
-                    for (Guest guest: guests) {
-                        guestsMsg.append("Guest: \"").append(guest.getName()).append("\"").append(System.lineSeparator());
-                        guestsMsg.append("Rooms:");
-                        for (Map.Entry<Character, Integer> room: guest.getBookedRooms().entrySet()) {
-                            guestsMsg.append("\t").append(room.getValue()).append(" rooms of type ").append(room.getValue());
-                            guestsMsg.append(System.lineSeparator());
+                    if (guests.size() > 0) {
+                        for (Guest guest: guests) {
+                            guestsMsg.append("Guest: \"").append(guest.getName()).append("\"").append(System.lineSeparator());
+                            guestsMsg.append("Rooms:");
+                            for (Map.Entry<Character, Integer> room: guest.getBookedRooms().entrySet()) {
+                                guestsMsg.append("\t").append(room.getValue()).append(" rooms of type ").append(room.getValue());
+                                guestsMsg.append(System.lineSeparator());
+                            }
+                            guestsMsg.append("Total invoice: ").append(guest.getTotalInvoice()).append("€").append(System.lineSeparator());
                         }
-                        guestsMsg.append("Total invoice: ").append(guest.getTotalInvoice()).append("€").append(System.lineSeparator());
                     }
+                    else {
+                        guestsMsg.append("No guests at the current time!").append(System.lineSeparator());
+                    }
+
                     System.out.println(guestsMsg.toString());
 
                     break;
