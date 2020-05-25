@@ -44,7 +44,6 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
             guests.put(name, guest);
         }
 
-        System.out.println();
         ArrayList<Integer> booked = new ArrayList<>();
         int bookedRooms = 0;
         if (rooms.get((roomType)).getAvailability() < numOfRooms) {
@@ -67,7 +66,7 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
     @Override
     public ArrayList<Guest> guests() throws RemoteException {
         ArrayList<Guest> guests = new ArrayList<>();
-
+        
         for (Guest guest: this.guests.values()) {
             guests.add(guest);
         }

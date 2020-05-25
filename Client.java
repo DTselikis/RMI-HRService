@@ -148,12 +148,13 @@ public class Client {
                     if (guests.size() > 0) {
                         for (Guest guest: guests) {
                             guestsMsg.append("Guest: \"").append(guest.getName()).append("\"").append(System.lineSeparator());
-                            guestsMsg.append("Rooms:");
+                            guestsMsg.append("Rooms:").append(System.lineSeparator());
                             for (Map.Entry<Character, Integer> room: guest.getBookedRooms().entrySet()) {
-                                guestsMsg.append("\t").append(room.getValue()).append(" rooms of type ").append(room.getValue());
+                                guestsMsg.append("\t").append(room.getValue()).append(" rooms of type ").append(room.getKey());
                                 guestsMsg.append(System.lineSeparator());
                             }
                             guestsMsg.append("Total invoice: ").append(guest.getTotalInvoice()).append("€").append(System.lineSeparator());
+                            guestsMsg.append(System.lineSeparator());
                         }
                     }
                     else {
