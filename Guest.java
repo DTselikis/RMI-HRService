@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Guest {
+public class Guest implements Serializable {
     private String name;
     private HashMap<Character, Integer> bookedRooms;
     private int totalInvoice;
