@@ -66,7 +66,7 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
     @Override
     public ArrayList<Guest> guests() throws RemoteException {
         ArrayList<Guest> guests = new ArrayList<>();
-        
+
         for (Guest guest: this.guests.values()) {
             guests.add(guest);
         }
@@ -83,8 +83,10 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
             StringBuilder msg = new StringBuilder();
             msg.append(numOfRooms).append(" rooms of type ").append(roomType).append(" is available!");
 
-            for (HRIClient client: notifyList.get(roomType)) {
-                client.notify(msg.toString());
+            if (notifyList.size() > 1) {
+                for (HRIClient client: notifyList.get(roomType)) {
+                    client.notify(msg.toString());
+                }
             }
 
             return guests.get(name).getBookedRooms();
