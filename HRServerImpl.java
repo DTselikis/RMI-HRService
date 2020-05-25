@@ -76,7 +76,13 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
 
     @Override
     public HashMap<Character, Integer> cancel(String name, int numOfRooms, char roomType) throws RemoteException {
-        if (rooms.get(roomType).checkBooked(name) > 0) {
+        int bookedRooms;
+        System.out.println();
+        if ((bookedRooms = rooms.get(roomType).checkBooked(name)) > 0) {
+            if (bookedRooms < numOfRooms) {
+                numOfRooms = bookedRooms;
+            }
+
             int remainingRooms = rooms.get(roomType).cancel(name, numOfRooms);
             guests.get(name).removeRooms(roomType, rooms.get(roomType).getPrice(), numOfRooms);
 

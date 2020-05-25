@@ -56,10 +56,9 @@ public class Room {
 
             remainingRooms = bookedRooms.get(name);
         }
-        else if (bookedRooms.get(name) == numOfRooms) {
+        else {
+            numOfRooms = bookedRooms.get(name);
             bookedRooms.remove(name);
-
-            remainingRooms = 0;
         }
 
         availability += numOfRooms;

@@ -18,16 +18,18 @@ public class Guest implements Serializable {
     }
 
     public void removeRooms(char type, int roomPrice, int numOfRooms) {
-        totalInvoice -= (bookedRooms.get(type) - numOfRooms) * roomPrice;
+        int numOfBooked = bookedRooms.get(type);
+        if (numOfBooked > numOfRooms) {
+            bookedRooms.put(type, bookedRooms.get(type) - numOfRooms);
 
-        if (bookedRooms.get(type) - numOfRooms == 0) {
-            bookedRooms.remove(type);
+            totalInvoice -= bookedRooms.get(type) * roomPrice;
         }
         else {
-            bookedRooms.put(type, bookedRooms.get(type) - numOfRooms);
+            bookedRooms.remove(type);
+
+            totalInvoice -= numOfRooms * roomPrice;
         }
 
-        totalInvoice -= bookedRooms.get(type) * roomPrice;
     }
 
     public String getName() {
