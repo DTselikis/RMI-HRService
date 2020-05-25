@@ -36,10 +36,12 @@ public class Client {
                         name = args[4];
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         if (args[0].equals("book")) {
-                            System.out.println("Usage: java HRClient book <hostname> <type> <number> <name>\n");
+                            System.out.println("Usage: java HRClient book <hostname> <type> <number> <name>");
+                            System.out.println(System.lineSeparator());
                         }
                         else {
-                            System.out.println("Usage: java HRClient cancel <hostname> <type> <number> <name>\n");
+                            System.out.println("Usage: java HRClient cancel <hostname> <type> <number> <name>");
+                            System.out.println(System.lineSeparator());
                         }
 
                         System.exit(1);
@@ -51,10 +53,12 @@ public class Client {
                         hostname = args[1];
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         if (args[0].equals("list")) {
-                            System.out.println("Usage: java HRClient list <hostname>\n");
+                            System.out.println("Usage: java HRClient list <hostname>");
+                            System.out.println(System.lineSeparator());
                         }
                         else {
-                            System.out.println("Usage: java HRClient guests <hostname>\n");
+                            System.out.println("Usage: java HRClient guests <hostname>");
+                            System.out.println(System.lineSeparator());
                         }
 
                         System.exit(1);
@@ -103,15 +107,18 @@ public class Client {
                         response = remoteServer.book(name, numOfRooms, type);
 
                         if (response.get(0) == numOfRooms) {
-                            System.out.println("All rooms booked with total cost of: " + response.get(1) + "€\n");
+                            System.out.println("All rooms booked with total cost of: " + response.get(1) + "€");
+                            System.out.println(System.lineSeparator());
 
                             roomsNotify.remove(Character.valueOf(type));
 
                             choice = "n";
                         }
                         else if (response.get(0) >= 0) {
-                            System.out.println("There are " + response.get(0) + " available rooms at the moment.\n");
-                            System.out.println("Do you want to book them?\n");
+                            System.out.println("There are " + response.get(0) + " available rooms at the moment.");
+                            System.out.println(System.lineSeparator());
+                            System.out.println("Do you want to book them?");
+                            System.out.println(System.lineSeparator());
                             System.out.print("Choice (y/n): ");
                             choice = input.nextLine();
 
@@ -123,7 +130,9 @@ public class Client {
 
                     // possible BUG
                     if (response.get(0) != numOfRooms && !roomsNotify.contains(Character.valueOf(type))) {
-                        System.out.println("\nDo you want to be notified when more rooms are available?\n");
+                        System.out.println(System.lineSeparator());
+                        System.out.println("Do you want to be notified when more rooms are available?");
+                        System.out.println(System.lineSeparator());
                         System.out.print("Choice (y/n): ");
                         choice = input.nextLine();
                         System.out.println();
@@ -135,7 +144,8 @@ public class Client {
 
                             roomsNotify.add(Character.valueOf(type));
                             remoteServer.registerForNotification(callback, type);
-                            System.out.println("You will be notified.\n");
+                            System.out.println("You will be notified.");
+                            System.out.println(System.lineSeparator());
                         }
                     }
                     break;
@@ -181,24 +191,31 @@ public class Client {
                         System.out.println(roomsMsg.toString());
                     }
                     else {
-                        System.out.println("No rooms of type " + type + " to cancel.\n");
+                        System.out.println("No rooms of type " + type + " to cancel.");
+                        System.out.println(System.lineSeparator());
                     }
                 }
             }
         } catch (NotBoundException e) {
             e.printStackTrace();
 
-            System.out.println("Failed to find server.\n");
+            System.out.println("Failed to find server.");
+            System.out.println(System.lineSeparator());
+
             System.exit(2);
         } catch (MalformedURLException e) {
             e.printStackTrace();
 
-            System.out.println("Failed to find server.\n");
+            System.out.println("Failed to find server.");
+            System.out.println(System.lineSeparator());
+
             System.exit(2);
         } catch (RemoteException e) {
             e.printStackTrace();
 
-            System.out.println("Failed to find server.\n");
+            System.out.println("Failed to find server.");
+            System.out.println(System.lineSeparator());
+            
             System.exit(2);
         }
     }
