@@ -35,12 +35,17 @@ public class Room {
     }
 
     public int book(String name, int numOfRooms) {
+        int totalRooms = numOfRooms;
+        if (bookedRooms.get(name) != null) {
+            totalRooms = bookedRooms.get(name) + numOfRooms;
+        }
+
         if (availability >= numOfRooms) {
-            bookedRooms.put(name, numOfRooms);
+            bookedRooms.put(name, totalRooms);
         }
         else {
             if ((numOfRooms = availability) != 0) {
-                bookedRooms.put(name, numOfRooms);
+                bookedRooms.put(name, totalRooms);
             }
         }
         availability -= numOfRooms;

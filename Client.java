@@ -215,7 +215,7 @@ public class Client {
 
             System.out.println("Failed to find server.");
             System.out.println(System.lineSeparator());
-            
+
             System.exit(2);
         }
     }

@@ -13,7 +13,12 @@ public class Guest implements Serializable {
     }
 
     public void addRoom(char type, int numOfRooms, int roomPrice) {
-        bookedRooms.put(type, numOfRooms);
+        int totalRooms = numOfRooms;
+
+        if (bookedRooms.get(type) != null) {
+            totalRooms = bookedRooms.get(type) + numOfRooms;
+        }
+        bookedRooms.put(type, totalRooms);
         totalInvoice += roomPrice * numOfRooms;
     }
 
