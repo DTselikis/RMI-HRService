@@ -29,10 +29,10 @@ public class Client implements Runnable {
 
         StringBuilder msg = new StringBuilder();
         if (args.length < 1) {
-            msg.append("Usage:").append("java HRClient list <hostname>").append(System.lineSeparator());
-            msg.append("java HRClient book <hostname> <type> <number> <name>").append(System.lineSeparator());
-            msg.append("java HRClient guests <hostname>").append(System.lineSeparator());
-            msg.append("java HRClient cancel <hostname> <type> <number> <name>").append(System.lineSeparator());
+            msg.append("Usage:").append("java Client list <hostname>").append(System.lineSeparator());
+            msg.append("java Client book <hostname> <type> <number> <name>").append(System.lineSeparator());
+            msg.append("java Client guests <hostname>").append(System.lineSeparator());
+            msg.append("java Client cancel <hostname> <type> <number> <name>").append(System.lineSeparator());
             System.out.println(msg.toString());
 
             System.exit(1);
@@ -125,7 +125,7 @@ public class Client implements Runnable {
 
                             choice = "n";
                         }
-                        else if (response.get(0) >= 0) {
+                        else if (response.get(0) > 0) {
                             System.out.println("There are " + response.get(0) + " available rooms at the moment.");
                             System.out.println(System.lineSeparator());
                             System.out.println("Do you want to book them?");
@@ -137,17 +137,25 @@ public class Client implements Runnable {
                                 numOfRooms = response.get(0);
                             }
                         }
+                        else {
+                            System.out.println("No available rooms at the moment");
+                            choice = "n";
+                        }
                     }
 
                     // possible BUG
                     if (response.get(0) != numOfRooms && !roomsNotify.contains(Character.valueOf(type))) {
-                        System.out.println(System.lineSeparator());
+                        System.out.println();
                         System.out.println("Do you want to be notified when more rooms are available?");
-                        System.out.println(System.lineSeparator());
+                        System.out.println();
                         System.out.print("Choice (y/n): ");
                         choice = input.nextLine();
 
                         if(choice.equals("y")) {
+                            System.out.print("How much time do you want to wait? (seconds): ");
+                            int waitFor = Integer.parseInt(input.nextLine());
+
+                            System.out.println();
                             if (callback == null) {
                                 callback = new HRClientImpl(me);
                             }
@@ -155,11 +163,17 @@ public class Client implements Runnable {
                             roomsNotify.add(Character.valueOf(type));
                             remoteServer.registerForNotification(callback, type);
                             System.out.println("You will be notified.");
-                            System.out.println(System.lineSeparator());
+                            System.out.println();
 
                             try {
-                                Thread.sleep(Integer.MAX_VALUE);
-                            } catch (InterruptedException e) { }
+                                Thread.sleep(waitFor * 1000);
+                            } catch (InterruptedException e) {
+                                roomsNotify.remove(Character.valueOf(type));
+                            }
+
+                            remoteServer.unregisterForNotification(callback, type);
+
+                            System.exit(0);
                         }
                     }
                     break;
@@ -214,21 +228,21 @@ public class Client implements Runnable {
             e.printStackTrace();
 
             System.out.println("Failed to find server.");
-            System.out.println(System.lineSeparator());
+            System.out.println();
 
             System.exit(2);
         } catch (MalformedURLException e) {
             e.printStackTrace();
 
             System.out.println("Failed to find server.");
-            System.out.println(System.lineSeparator());
+            System.out.println();
 
             System.exit(2);
         } catch (RemoteException e) {
             e.printStackTrace();
 
             System.out.println("Failed to find server.");
-            System.out.println(System.lineSeparator());
+            System.out.println();
 
             System.exit(2);
         }

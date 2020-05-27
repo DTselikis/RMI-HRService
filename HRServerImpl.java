@@ -51,7 +51,7 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
         }
         else {
             bookedRooms = rooms.get(roomType).book(name, numOfRooms);
-            System.out.println("booked rooms:" + bookedRooms);
+
             if (bookedRooms > 0) {
                 guest.addRoom(roomType, numOfRooms, rooms.get(roomType).getPrice());
             }
@@ -108,6 +108,15 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
         }
         notifyList.get(type).add(client);
 
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean unregisterForNotification(HRIClient client, char type) throws RemoteException {
+        if (notifyList.get(type) != null) {
+            notifyList.get(type).remove(client);
+        }
+
+        return true;
     }
 }
