@@ -7,8 +7,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Client {
-    public static void main(String[] args) {
+public class Client implements Runnable {
+    private String[] args;
+    private Thread me = null;
+
+    public Client(String[] args) {
+        this.args = args;
+    }
+
+    public void addThread (Thread me) {
+        this.me = me;
+    }
+
+    public void run() {
         String hostname = "";
         char type = 'A';
         int numOfRooms = 0;
@@ -135,17 +146,20 @@ public class Client {
                         System.out.println(System.lineSeparator());
                         System.out.print("Choice (y/n): ");
                         choice = input.nextLine();
-                        System.out.println();
 
                         if(choice.equals("y")) {
                             if (callback == null) {
-                                callback = new HRClientImpl();
+                                callback = new HRClientImpl(me);
                             }
 
                             roomsNotify.add(Character.valueOf(type));
                             remoteServer.registerForNotification(callback, type);
                             System.out.println("You will be notified.");
                             System.out.println(System.lineSeparator());
+
+                            try {
+                                Thread.sleep(Integer.MAX_VALUE);
+                            } catch (InterruptedException e) { }
                         }
                     }
                     break;
@@ -218,5 +232,12 @@ public class Client {
 
             System.exit(2);
         }
+    }
+
+    public static void main(String[] args) {
+        Client client = new Client(args);
+        Thread threadClnt = new Thread(client);
+        client.addThread(threadClnt);
+        threadClnt.start();
     }
 }

@@ -89,7 +89,7 @@ public class HRServerImpl extends UnicastRemoteObject implements HRIServer {
             StringBuilder msg = new StringBuilder();
             msg.append(numOfRooms).append(" rooms of type ").append(roomType).append(" is available!");
 
-            if (notifyList.size() > 1) {
+            if (notifyList.size() > 0) {
                 for (HRIClient client: notifyList.get(roomType)) {
                     client.notify(msg.toString());
                 }
