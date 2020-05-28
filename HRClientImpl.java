@@ -14,6 +14,7 @@ public class HRClientImpl extends UnicastRemoteObject implements HRIClient {
     public boolean notify(String msg) throws RemoteException {
         System.out.println(msg);
 
+        // Wake the client to continue execution
         client.interrupt();
 
         return true;

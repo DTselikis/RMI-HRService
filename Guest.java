@@ -15,6 +15,8 @@ public class Guest implements Serializable {
     public void addRoom(char type, int numOfRooms, int roomPrice) {
         int totalRooms = numOfRooms;
 
+        // If this guest already has booked rooms of this type
+        // add booked rooms with those to be booked
         if (bookedRooms.get(type) != null) {
             totalRooms = bookedRooms.get(type) + numOfRooms;
         }
@@ -24,12 +26,15 @@ public class Guest implements Serializable {
 
     public void removeRooms(char type, int roomPrice, int numOfRooms) {
         int numOfBooked = bookedRooms.get(type);
+
+        // If booked rooms is more, subtract the number
         if (numOfBooked > numOfRooms) {
             bookedRooms.put(type, bookedRooms.get(type) - numOfRooms);
 
             totalInvoice -= bookedRooms.get(type) * roomPrice;
         }
         else {
+            // else remove the this type of room entirely
             bookedRooms.remove(type);
 
             totalInvoice -= numOfRooms * roomPrice;

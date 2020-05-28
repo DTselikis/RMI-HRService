@@ -39,6 +39,7 @@ public class Client implements Runnable {
         }
         else {
             switch (args[0]) {
+                // Cases "book" and "cancel" has the same parameters with "guests" and "list" plus three more
                 case "book":
                 case "cancel": {
                     try {
@@ -58,6 +59,7 @@ public class Client implements Runnable {
                         System.exit(1);
                     }
                 }
+                // Cases "book" and "cancel" has the same parameters
                 case "guests":
                 case "list": {
                     try {
@@ -126,6 +128,8 @@ public class Client implements Runnable {
                             choice = "n";
                         }
                         else if (response.get(0) > 0) {
+                            // If the exact number of rooms is not available, notify the user
+                            // and if he wants, try again to book with the available rooms
                             System.out.println("There are " + response.get(0) + " available rooms at the moment.");
                             System.out.println(System.lineSeparator());
                             System.out.println("Do you want to book them?");
@@ -143,7 +147,7 @@ public class Client implements Runnable {
                         }
                     }
 
-                    // possible BUG
+                    // If there was not enough rooms and guest is not already in the waiting list
                     if (response.get(0) != numOfRooms && !roomsNotify.contains(Character.valueOf(type))) {
                         System.out.println();
                         System.out.println("Do you want to be notified when more rooms are available?");
@@ -168,11 +172,14 @@ public class Client implements Runnable {
                             try {
                                 Thread.sleep(waitFor * 1000);
                             } catch (InterruptedException e) {
+                                // User have been notified so remove his from
+                                // waiting list of this type of rooms
                                 roomsNotify.remove(Character.valueOf(type));
                             }
 
                             remoteServer.unregisterForNotification(callback, type);
 
+                            // To exit after sleep
                             System.exit(0);
                         }
                     }
@@ -249,6 +256,8 @@ public class Client implements Runnable {
     }
 
     public static void main(String[] args) {
+        // Create a thread to be able to sleep and interrupt
+
         Client client = new Client(args);
         Thread threadClnt = new Thread(client);
         client.addThread(threadClnt);
